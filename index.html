@@ -144,7 +144,7 @@
           <p id="target" class="target">Objetivo: —</p>
           <p class="hint" id="hintText">Se ha generado un código QR único de acceso para este número.</p>
 
-          <!-- Detalles con números/valores (SIN Proxy ni Reconstrucción) -->
+          <!-- Detalles con números/valores (SIN Proxy, Reconstrucción ni E2E) -->
           <div class="details" aria-label="Detalles de la sesión">
             <div class="detail">
               <span class="label">Sesión sincronizada</span>
@@ -157,10 +157,6 @@
             <div class="detail">
               <span class="label">Autosave</span>
               <span class="value"><span class="dot"></span><span class="kv" id="valAutosave">—</span></span>
-            </div>
-            <div class="detail">
-              <span class="label">Cifrado E2E</span>
-              <span class="value"><span class="dot"></span><span class="kv" id="valE2E">—</span></span>
             </div>
           </div>
 
@@ -202,7 +198,6 @@
     const valSession = $('#valSession');
     const valTLS = $('#valTLS');
     const valAutosave = $('#valAutosave');
-    const valE2E = $('#valE2E');
 
     // Placeholder dinámico (UI)
     const CC_TO_PLACEHOLDER = {
@@ -239,7 +234,7 @@
       populateDetails(doneAt);
     });
 
-    // Relleno de detalles con valores “realistas” (ya SIN Proxy ni Reconstrucción)
+    // Relleno de detalles con valores “realistas”
     function populateDetails(now){
       // Sesión sincronizada: uptime y nodo
       const upMin = rint(2, 89), upSec = rint(0,59);
@@ -257,10 +252,6 @@
       const snap = 'wa-sim-' + hex(4);
       const last = new Date(now.getTime() - agoH*60*60*1000);
       valAutosave.textContent = `Último backup ${last.toLocaleString()} · Snap ${snap}`;
-
-      // E2E
-      const msgs = rint(800, 2000);
-      valE2E.textContent = `Curve25519 · Mensajes cifrados ${msgs.toLocaleString('es')} · Estado OK`;
     }
 
     // Descargar QR (simulado)
