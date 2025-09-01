@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proceso finalizado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#0e1114; --surface:#151a1f; --card:#11161b; --border:#1e2a33;
+      --text:#e7f4ec; --muted:#9acfb8; --accent:#19e07b; --accent-2:#10c469;
+      --shadow:0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.02);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:
+        radial-gradient(900px 500px at -10% -20%, #1a2430 0%, transparent 60%),
+        radial-gradient(800px 450px at 110% -10%, #18232c 0%, transparent 55%),
+        var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    }
+    .shell{min-height:100vh;display:grid;place-items:center;padding:24px}
+    .window{
+      width:min(900px,96vw); background:var(--surface); border:1px solid var(--border);
+      border-radius:22px; box-shadow:var(--shadow); overflow:hidden;
+    }
+    .titlebar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(0,0,0,.15)), #0d1216;
+    }
+    .appname{font-weight:900;letter-spacing:.3px}
+    .version{font-size:12px;color:var(--muted)}
+    .content{padding:18px}
+
+    /* LOGIN */
+    .login-card{
+      display:grid;gap:12px;grid-template-columns:1fr 2fr auto;
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:18px;box-shadow:var(--shadow);text-align:left;margin:8px 0 12px;
+    }
+    @media (max-width:720px){ .login-card{grid-template-columns:1fr} }
+    .login-title{margin:0 0 4px;font-size:18px;font-weight:900;color:#c7f5df}
+    .login-sub{margin:0;color:var(--muted);font-size:12px}
+    select,input,button{
+      background:#0f1419;border:1px solid var(--border);color:var(--text);
+      border-radius:12px;padding:12px 14px;font-size:15px;outline:none;
+      transition:border-color .2s, box-shadow .2s, transform .05s;
+    }
+    button{cursor:pointer;font-weight:800}
+    .btn-primary{
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color:#002312;border:1px solid rgba(25,224,123,.6);
+      box-shadow: 0 10px 28px rgba(25,224,123,.25), inset 0 -6px 12px rgba(0,0,0,.25);
+    }
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+    /* ÉXITO */
+    .card{
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:28px;
+      text-align:center;
+    }
+    .check{
+      width:92px;height:92px;border-radius:50%;display:inline-grid;place-items:center;margin:6px auto 12px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2)); color:#002312;
+      font-size:44px;font-weight:900;
+      box-shadow:0 14px 36px rgba(25,224,123,.35), inset 0 -10px 14px rgba(0,0,0,.25);
+    }
+    .title{margin:6px 0 4px 0;font-size:26px;font-weight:900;color:#c7f5df;letter-spacing:.4px}
+    .target{margin:2px 0 0;color:#aeeecf;font-size:14px;font-weight:700}
+    .hint{margin:8px 0 0;color:var(--muted);font-size:12px}
+
+    /* Detalles “reales” (no botones) */
+    .details{
+      margin:16px auto 6px;
+      width:min(820px, 100%);
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      text-align:left;
+    }
+    .detail{
+      display:flex; align-items:center; justify-content:space-between;
+      background:#0a0f13; border:1px solid var(--border);
+      border-radius:12px; padding:10px 12px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+      cursor:default; user-select:text;
+    }
+    .detail .label{
+      font-size:13px; font-weight:900; color:#c7f5df; letter-spacing:.2px;
+    }
+    .detail .value{
+      display:flex; align-items:center; gap:10px;
+      font-size:12px; font-weight:800; color:#aeeecf; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:50%;
+      background:var(--accent-2);
+      box-shadow:0 0 10px rgba(16,196,105,.6);
+      flex:0 0 10px;
+    }
+    .kv{opacity:.95}
+    .sep{opacity:.55}
+
+    .footer-actions{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="window">
+      <div class="titlebar">
+        <div id="appTitle" class="appname">Hackeado — Simulación</div>
+        <div id="appMeta" class="version">v1.0 • Cierre</div>
+      </div>
+
+      <div class="content">
+        <!-- LOGIN (ingreso de número) -->
+        <section id="scr-login" class="login-card">
+          <div style="grid-column:1/-1">
+            <h3 class="login-title">Iniciar sesión (simulado)</h3>
+            <p class="login-sub">Selecciona el código de país e ingresa el número. (UI, sin acciones reales)</p>
+          </div>
+          <select id="cc">
+            <option value="+593">+593 (Ecuador)</option>
+            <option value="+57">+57 (Colombia)</option>
+            <option value="+51">+51 (Perú)</option>
+            <option value="+52">+52 (México)</option>
+            <option value="+54">+54 (Argentina)</option>
+            <option value="+34">+34 (España)</option>
+            <option value="+1">+1 (EE. UU.)</option>
+          </select>
+          <input id="num" type="text" inputmode="numeric" maxlength="15" placeholder="9XX XXX XXX" />
+          <button id="btnLogin" class="btn-primary">Continuar</button>
+        </section>
+
+        <!-- PANTALLA DE ÉXITO -->
+        <section id="scr-success" class="card" style="display:none">
+          <div class="check">✓</div>
+          <h2 class="title">HACKEADO</h2>
+          <p id="target" class="target">Objetivo: —</p>
+          <p class="hint" id="hintText">Se ha generado un código QR único de acceso para este número.</p>
+
+          <!-- Detalles con números/valores -->
+          <div class="details" aria-label="Detalles de la sesión">
+            <div class="detail">
+              <span class="label">Sesión sincronizada</span>
+              <span class="value"><span class="dot"></span><span class="kv" id="valSession">—</span></span>
+            </div>
+            <div class="detail">
+              <span class="label">TLS activo</span>
+              <span class="value"><span class="dot"></span><span class="kv" id="valTLS">—</span></span>
+            </div>
+            <div class="detail">
+              <span class="label">Proxy enmascarado</span>
+              <span class="value"><span class="dot"></span><span class="kv" id="valProxy">—</span></span>
+            </div>
+            <div class="detail">
+              <span class="label">Reconstrucción</span>
+              <span class="value"><span class="dot"></span><span class="kv" id="valRecon">—</span></span>
+            </div>
+            <div class="detail">
+              <span class="label">Autosave</span>
+              <span class="value"><span class="dot"></span><span class="kv" id="valAutosave">—</span></span>
+            </div>
+            <div class="detail">
+              <span class="label">Cifrado E2E</span>
+              <span class="value"><span class="dot"></span><span class="kv" id="valE2E">—</span></span>
+            </div>
+          </div>
+
+          <!-- SOLO estos dos botones -->
+          <div class="footer-actions">
+            <button id="downloadQR" class="btn-primary">Descargar código QR</button>
+            <button id="reset" class="btn-ghost">Reiniciar</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas oculto para generar QR (simulado) -->
+  <canvas id="qrCanvas" width="240" height="240" style="display:none"></canvas>
+
+  <script>
+    // ===== Utilidades =====
+    const $ = s => document.querySelector(s);
+    const pad = n => String(n).padStart(2,'0');
+    const rint = (a,b)=> Math.floor(Math.random()*(b-a+1))+a;
+    const rpick = arr => arr[Math.floor(Math.random()*arr.length)];
+    const hex = (len)=> [...crypto.getRandomValues(new Uint8Array(len))].map(b=>b.toString(16).padStart(2,'0')).join('');
+
+    // Elementos
+    const appTitle = $('#appTitle');
+    const appMeta  = $('#appMeta');
+
+    const scrLogin = $('#scr-login');
+    const scrSuccess = $('#scr-success');
+    const ccEl = $('#cc');
+    const numEl = $('#num');
+    const btnLogin = $('#btnLogin');
+    const targetEl = $('#target');
+    const btnQR = $('#downloadQR');
+    const btnReset = $('#reset');
+    const qrCanvas = $('#qrCanvas');
+
+    const valSession = $('#valSession');
+    const valTLS = $('#valTLS');
+    const valProxy = $('#valProxy');
+    const valRecon = $('#valRecon');
+    const valAutosave = $('#valAutosave');
+    const valE2E = $('#valE2E');
+
+    // Placeholder dinámico (UI)
+    const CC_TO_PLACEHOLDER = {
+      '+593':'9XX XXX XXX', '+57':'3XX XXX XXXX', '+51':'9XX XXX XXX',
+      '+52':'55 XX XX XXXX', '+54':'11 XXXX XXXX', '+34':'6XX XX XX XX', '+1':'(XXX) XXX-XXXX'
+    };
+    function updatePlaceholder(){ numEl.placeholder = CC_TO_PLACEHOLDER[ccEl.value] || '9XX XXX XXX'; }
+    ccEl.addEventListener('change', updatePlaceholder); updatePlaceholder();
+    numEl.addEventListener('input', ()=>{ numEl.value = numEl.value.replace(/[^\d]/g,'').slice(0,15); });
+
+    // Validación simple
+    const validNumber = n => /^\d{6,15}$/.test(n.replace(/\s+/g,''));
+
+    // Al “iniciar sesión” → mostrar éxito y poblar detalles
+    btnLogin.addEventListener('click', ()=>{
+      const cc = ccEl.value.trim();
+      const n  = numEl.value.trim().replace(/\s+/g,'');
+      if(!validNumber(n)){ alert('Ingresa un número válido (6–15 dígitos).'); return; }
+
+      // Título superior y meta con fecha/hora de finalización
+      const doneAt = new Date();
+      appTitle.textContent = 'Proceso finalizado';
+      appMeta.textContent  = 'Finalizado: ' + doneAt.toLocaleString();
+
+      // Objetivo + mostrar card
+      targetEl.textContent = `Objetivo: ${cc} ${n}`;
+      scrLogin.style.display = 'none';
+      scrSuccess.style.display = 'block';
+
+      // Generar QR simulado
+      drawFakeQR(`${cc} ${n}`);
+
+      // Poblar detalles realistas (simulados)
+      populateDetails(doneAt);
+    });
+
+    // Relleno de detalles con valores “realistas”
+    function populateDetails(now){
+      // Sesión sincronizada: uptime y nodo
+      const upMin = rint(2, 89), upSec = rint(0,59);
+      const node = rpick(['gw-ec-02','edge-ec-07','sa-ec-gw1','sa1-wa-proxy']);
+      valSession.textContent = `Estable · Uptime ${pad(upMin)}:${pad(upSec)} · Nodo ${node}`;
+
+      // TLS activo
+      const suite = rpick(['TLS_AES_256_GCM_SHA384','TLS_CHACHA20_POLY1305_SHA256']);
+      const kx = 'X25519';
+      const exp = new Date(now.getTime() + rint(90, 540)*24*60*60*1000); // 3–18 meses
+      valTLS.textContent = `v1.3 · Suite ${suite} · ECDHE ${kx} · Cert exp ${exp.toLocaleDateString()}`;
+
+      // Proxy enmascarado
+      const ip = `10.${rint(10,99)}.${rint(0,255)}.${rint(1,254)}:${rpick([443,8443])}`;
+      const reg = rpick(['SA-EC','SA-PE','SA-CO']);
+      const tunnel = rpick(['HTTP/2','gRPC','H2']);
+      const lat = rint(24, 95);
+      valProxy.textContent = `${ip} · Región ${reg} · Túnel ${tunnel} · Lat ${lat} ms`;
+
+      // Reconstrucción
+      const fr = rint(78,97);
+      const pk = rint(42000, 98000);
+      const loss = (Math.random()*2.5+0.3).toFixed(1);
+      valRecon.textContent = `Fragmentos ${fr}% · Paquetes ${pk.toLocaleString('es')} · Pérdida ${loss}%`;
+
+      // Autosave
+      const agoH = rint(1, 12);
+      const snap = 'wa-sim-' + hex(4);
+      const last = new Date(now.getTime() - agoH*60*60*1000);
+      valAutosave.textContent = `Último backup ${last.toLocaleString()} · Snap ${snap}`;
+
+      // E2E
+      const msgs = rint(800, 2000);
+      valE2E.textContent = `Curve25519 · Mensajes cifrados ${msgs.toLocaleString('es')} · Estado OK`;
+    }
+
+    // Descargar QR (simulado)
+    btnQR.addEventListener('click', ()=>{
+      const link = document.createElement('a');
+      link.download = 'qr_simulado.png';
+      link.href = qrCanvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    });
+
+    // Reiniciar
+    btnReset.addEventListener('click', ()=>{
+      scrSuccess.style.display = 'none';
+      scrLogin.style.display = 'grid';
+      numEl.value = '';
+      updatePlaceholder();
+      // Reset título superior
+      appTitle.textContent = 'Hackeado — Simulación';
+      appMeta.textContent = 'v1.0 • Cierre';
+      // Limpiar QR
+      const ctx = qrCanvas.getContext('2d');
+      ctx.clearRect(0,0,qrCanvas.width,qrCanvas.height);
+    });
+
+    // ====== QR FICTICIO (sin librerías; solo visual) ======
+    function hashCode(str){
+      let h=0; for(let i=0;i<str.length;i++){ h=(h<<5)-h+str.charCodeAt(i); h|=0; }
+      return Math.abs(h);
+    }
+    function drawFinder(ctx, x, y, m){
+      ctx.fillStyle = '#000';
+      ctx.fillRect(x, y, 7*m, 7*m);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x+m, y+m, 5*m, 5*m);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(x+2*m, y+2*m, 3*m, 3*m);
+    }
+    function drawFakeQR(text='SIMULADO'){
+      const size = 240, margin = 12, modules = 29;
+      const m = Math.floor((size - margin*2) / modules), s = margin;
+      const ctx = qrCanvas.getContext('2d');
+
+      // Fondo
+      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,size,size);
+
+      // Semilla desde el número
+      let seed = hashCode(String(text));
+      function rnd(){ seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+
+      // Patrones finder
+      drawFinder(ctx, s, s, m);
+      drawFinder(ctx, s + (modules-7)*m, s, m);
+      drawFinder(ctx, s, s + (modules-7)*m, m);
+
+      // Puntos pseudo-aleatorios
+      for(let y=0; y<modules; y++){
+        for(let x=0; x<modules; x++){
+          const inTL = x<7 && y<7;
+          const inTR = x>=modules-7 && y<7;
+          const inBL = x<7 && y>=modules-7;
+          if(inTL || inTR || inBL) continue;
+          if(rnd() < 0.5){
+            ctx.fillStyle = '#000';
+            ctx.fillRect(s + x*m, s + y*m, m, m);
+          }
+        }
+      }
+
+      // Borde
+      ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+      ctx.strokeRect(0.5,0.5,size-1,size-1);
+    }
+
+    // QR inicial por si descargan sin login
+    drawFakeQR('SIMULADO');
+  </script>
+</body>
+</html>
