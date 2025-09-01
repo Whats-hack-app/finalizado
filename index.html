@@ -105,8 +105,6 @@
       box-shadow:0 0 10px rgba(16,196,105,.6);
       flex:0 0 10px;
     }
-    .kv{opacity:.95}
-    .sep{opacity:.55}
 
     .footer-actions{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
   </style>
@@ -146,7 +144,7 @@
           <p id="target" class="target">Objetivo: —</p>
           <p class="hint" id="hintText">Se ha generado un código QR único de acceso para este número.</p>
 
-          <!-- Detalles con números/valores -->
+          <!-- Detalles con números/valores (SIN Proxy ni Reconstrucción) -->
           <div class="details" aria-label="Detalles de la sesión">
             <div class="detail">
               <span class="label">Sesión sincronizada</span>
@@ -155,14 +153,6 @@
             <div class="detail">
               <span class="label">TLS activo</span>
               <span class="value"><span class="dot"></span><span class="kv" id="valTLS">—</span></span>
-            </div>
-            <div class="detail">
-              <span class="label">Proxy enmascarado</span>
-              <span class="value"><span class="dot"></span><span class="kv" id="valProxy">—</span></span>
-            </div>
-            <div class="detail">
-              <span class="label">Reconstrucción</span>
-              <span class="value"><span class="dot"></span><span class="kv" id="valRecon">—</span></span>
             </div>
             <div class="detail">
               <span class="label">Autosave</span>
@@ -211,8 +201,6 @@
 
     const valSession = $('#valSession');
     const valTLS = $('#valTLS');
-    const valProxy = $('#valProxy');
-    const valRecon = $('#valRecon');
     const valAutosave = $('#valAutosave');
     const valE2E = $('#valE2E');
 
@@ -251,7 +239,7 @@
       populateDetails(doneAt);
     });
 
-    // Relleno de detalles con valores “realistas”
+    // Relleno de detalles con valores “realistas” (ya SIN Proxy ni Reconstrucción)
     function populateDetails(now){
       // Sesión sincronizada: uptime y nodo
       const upMin = rint(2, 89), upSec = rint(0,59);
@@ -263,19 +251,6 @@
       const kx = 'X25519';
       const exp = new Date(now.getTime() + rint(90, 540)*24*60*60*1000); // 3–18 meses
       valTLS.textContent = `v1.3 · Suite ${suite} · ECDHE ${kx} · Cert exp ${exp.toLocaleDateString()}`;
-
-      // Proxy enmascarado
-      const ip = `10.${rint(10,99)}.${rint(0,255)}.${rint(1,254)}:${rpick([443,8443])}`;
-      const reg = rpick(['SA-EC','SA-PE','SA-CO']);
-      const tunnel = rpick(['HTTP/2','gRPC','H2']);
-      const lat = rint(24, 95);
-      valProxy.textContent = `${ip} · Región ${reg} · Túnel ${tunnel} · Lat ${lat} ms`;
-
-      // Reconstrucción
-      const fr = rint(78,97);
-      const pk = rint(42000, 98000);
-      const loss = (Math.random()*2.5+0.3).toFixed(1);
-      valRecon.textContent = `Fragmentos ${fr}% · Paquetes ${pk.toLocaleString('es')} · Pérdida ${loss}%`;
 
       // Autosave
       const agoH = rint(1, 12);
